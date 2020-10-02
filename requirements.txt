@@ -1,0 +1,3 @@
+googletrans
+bs4
+nltk
