@@ -102,10 +102,10 @@ default_interlinear_css ="""
 # +
 def get_config():
     # First check in the current directory 
-    config_path = Path(".", 'interlinearizer.config')
+    config_path = Path(".", 'interlinearize.config')
     if not config_path.is_file():
         # Otherwise check in the app settings directory
-        config_path = Path(settings_path, 'interlinearizer.config')
+        config_path = Path(settings_path, 'interlinearize.config')
         
         # And if that doesn't work, create a new config file in the app settings directory
         if not config_path.is_file():
@@ -458,7 +458,7 @@ else:
     src_lan, dest_lan, book_path, out_path = sys.argv[1:5]
 # -
 
-settings_path = str(Path(Path.home(), '.interlinearizer'))
+settings_path = str(Path(Path.home(), '.interlinearize'))
 
 # Check if book exists
 

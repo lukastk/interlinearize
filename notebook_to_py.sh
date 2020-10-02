@@ -1,7 +1,7 @@
 #!/bin/sh
 
-jupytext --to py interlinearizer.ipynb
+jupytext --to py interlinearize.ipynb
 
-echo '#!/usr/bin/env python3' | cat - interlinearizer.py > temp && mv temp interlinearizer.py
+echo '#!/usr/bin/env python3' | cat - interlinearize.py > temp && mv temp interlinearize.py
 
-chmod +x interlinearizer.py
+chmod +x interlinearize.py
