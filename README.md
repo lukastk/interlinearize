@@ -49,7 +49,7 @@ from anywhere within the terminal), you can move `interlinearize.py`
 to `/usr/local/bin`:
 
     chmod +x interlinearizer.py
-    mv interlinearizer.py /usr/local/bin/interlinearizer
+    cp interlinearizer.py /usr/local/bin/interlinearizer
 
 or any other folder that is in your `PATH` environmental variable. If you
 do this, then `interlinearize` will automatically generate configuration
