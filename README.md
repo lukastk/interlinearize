@@ -44,12 +44,12 @@ You will also have to install [Calibre](https://calibre-ebook.com/),
 as `interlinearize` makes use of its `ebook-convert`.
 Furthermore, you'll need to have Python 3 installed.
 
-If you do want to "install" `interlinearizer` (i.e. make it accessible
+If you do want to "install" `interlinearize` (i.e. make it accessible
 from anywhere within the terminal), you can move `interlinearize.py`
 to `/usr/local/bin`:
 
-    chmod +x interlinearizer.py
-    cp interlinearizer.py /usr/local/bin/interlinearizer
+    chmod +x interlinearize.py
+    cp interlinearize.py /usr/local/bin/interlinearize
 
 or any other folder that is in your `PATH` environmental variable. If you
 do this, then `interlinearize` will automatically generate configuration
@@ -60,7 +60,7 @@ files in `~/.interlinearize/` the first time it is run.
 Use the interlinearizer in the following way:
 
 ```bash
-python interlinearizer.py src dest book.format1 output.format2
+python interlinearize.py src dest book.format1 output.format2
 ```
 
 where `src` and `dest` are the source and destination languages
@@ -71,14 +71,14 @@ For example, to translate the copy of *Candide* in the repository
 execute the following command
 
 ```bash
-python interlinearizer.py fr en "Candide - Voltaire.epub" "Candide - Voltaire (interlinearized).epub"
+python interlinearize.py fr en "Candide - Voltaire.epub" "Candide - Voltaire (interlinearized).epub"
 ```
 
 If you want an HTML version of the interlinearized book, then omit the
 file extension for the output
 
 ```bash
-python interlinearizer.py fr en "Candide - Voltaire.epub" "Candide - Voltaire (interlinearized)"
+python interlinearize.py fr en "Candide - Voltaire.epub" "Candide - Voltaire (interlinearized)"
 ```
 
 Whenever you use the `interlinearize`, the dictionaries it assembles
