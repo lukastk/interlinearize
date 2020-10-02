@@ -1,6 +1,6 @@
 # Interlinearizer
 
-An [interlinear](https://www.wikiwand.com/en/Interlinear_gloss) book is
+An [interlinear](https://www.wikiwand.com/en/Interlinear_gloss) book is an
 annotaded version of a text, where each word of the original text
 is accompanied with a translation just underneath. `interlinearizer`
 is a tool with which we can convert EPUB files (or any other format
