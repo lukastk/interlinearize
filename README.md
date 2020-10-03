@@ -86,6 +86,32 @@ will always be stored as text files in the `dict` folder (for more
 details see the section below), so the more books you use it on
 the less time it will take to translate.
 
+### Other commands
+
+Open the config file:
+
+```bash
+python interlinearize.py -c config
+```
+
+Open the style file:
+
+```bash
+python interlinearize.py -c css
+```
+
+Reset the config|css|all to default:
+
+```bash
+python interlinearize.py -c clear config|css|all
+```
+
+Reset a dictionary:
+
+```bash
+python interlinearize.py -c cleardict src dest
+```
+
 ## Settings
 
 You can change the formatting of the interlinearized text by editing

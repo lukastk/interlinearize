@@ -43,28 +43,34 @@ words_per_request = 1
 ignorable_punctuation_tokens = !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~«»‘’”“–
 
 [formatting]
+exclude_spaces = False
 class_translation = il_translation
 class_word = il_word
 class_paragraph = il_paragraph
 class_space = il_space
+
+[misc]
+default_editor = gedit
 """
 
 default_interlinear_css ="""
+
 .il_paragraph {
     width: 100%;
     overflow-wrap: anywhere;
-    font-size: 1px;
+    font-size: 1.7em !important;
+    text-indent: 1.3em !important;
 }
 
 .il_word {
-    font-size: 16px;
+    font-size: 1em;
     position: relative;
     display: inline-block;
-    padding-left: 12px;
-    padding-right: 12px;
+    padding-left: 0px;
+    padding-right: 0px;
     text-align: center;
     overflow-wrap: normal;
-    height: 70px;
+    height: 60px;
 }
 
 .il_word:first-child {
@@ -80,7 +86,7 @@ default_interlinear_css ="""
     position: absolute;
     top: 30px;
     left: 0;
-    font-size: 12px;
+    font-size: 0.6em;
     text-align: center;
     color: #999;
 
@@ -100,7 +106,7 @@ default_interlinear_css ="""
 
 
 # +
-def get_config():
+def get_config(get_path = False):
     # First check in the current directory 
     config_path = Path(".", 'interlinearize.config')
     if not config_path.is_file():
@@ -116,9 +122,13 @@ def get_config():
     
     config = configparser.RawConfigParser()
     config.read(str(config_path))
-    return config
 
-def load_word_dict(src, dest):
+    if not get_path:
+        return config
+    else:
+        return str(config_path), config
+
+def load_word_dict(src, dest, get_path=False):
     # First check in the current directory
     word_dict_folder_path = Path(".", 'dicts')
     
@@ -139,14 +149,19 @@ def load_word_dict(src, dest):
                 for src_w, dest_w in csv_r:
                     word_dict[src_w] = dest_w
                     
-                return str(word_dict_folder_path), word_dict
+                ret = str(word_dict_folder_path), word_dict
         else:
-            return str(word_dict_folder_path), {}
+            ret = str(word_dict_folder_path), {}
     else:
-        return str(word_dict_folder_path), {}
+        ret = str(word_dict_folder_path), {}
+
+    if get_path:
+        return ret
+    else:
+        return ret[1]
     
 def save_word_dict(src, dest, word_dict):
-    word_dict_folder_path, _ = load_word_dict(src, dest)
+    word_dict_folder_path, _ = load_word_dict(src, dest, get_path=True)
     Path(word_dict_folder_path).mkdir(parents=True, exist_ok=True)
     
     word_dict_path = Path(word_dict_folder_path, "%s_%s.txt" % (src, dest))
@@ -160,7 +175,7 @@ def save_word_dict(src, dest, word_dict):
         for src_w, dest_w in zip(src_words, dest_words):
             csv_w.writerow([src_w, dest_w])
     
-def get_interlinear_css():
+def get_interlinear_css(get_path=False):
     # First check in the current directory 
     css_path = Path(".", 'interlinear.css')
     if not css_path.is_file():
@@ -177,7 +192,10 @@ def get_interlinear_css():
     with open(str(css_path), "r") as f:
         css = f.read()
     
-    return css
+    if get_path:
+        return str(css_path), css
+    else:
+        return css
 
 def convert_book_to_HTML(book_path):
     """Takes any file supported by ebook-convert, and converts it into an HTML file and returns it."""
@@ -353,9 +371,10 @@ def add_subtitle_to_text(text, word_dict, class_translation, class_word, class_p
         word_span.insert(0, w)    
         tag_list.append(word_span)
     
-        space_tag = Tag(builder=book_soup.builder,  name='div', attrs={'class':class_space})
-        space_tag.insert(0, "&nbsp;")
-        tag_list.append(NavigableString(" "))
+        if not exclude_spaces:
+            space_tag = Tag(builder=book_soup.builder,  name='div', attrs={'class':class_space})
+            space_tag.insert(0, "&nbsp;")
+            tag_list.append(NavigableString(" "))
         
     if len(word_list) > 0:
         word_list = word_list[:-1] # Remove last space
@@ -429,7 +448,10 @@ def write_translation(book_soup, tmp, book_path, out_path):
     # else, use calibre
     
     else:
-    
+        # ebook-convert doesn't deal with ~ properly, so we convert it
+        if out_path[:2] == '~/':
+            out_path = str(Path( Path.home(), out_path[2:] ))
+
         process = subprocess.Popen(['ebook-convert', book_html_path, out_path ],
                              stdout=subprocess.PIPE, 
                              stderr=subprocess.PIPE)
@@ -441,8 +463,10 @@ def write_translation(book_soup, tmp, book_path, out_path):
 
     tmp_dir.cleanup()
 
-
 # ## Code
+
+settings_path = str(Path(Path.home(), '.interlinearize'))
+
 
 # +
 def is_interactive():
@@ -455,10 +479,41 @@ if is_interactive():
     book_path = "examples/original/Candide - Voltaire.epub"
     out_path = "examples/interlinearized/Candide - Voltaire (interlinearized).epub"
 else:
-    src_lan, dest_lan, book_path, out_path = sys.argv[1:5]
-# -
 
-settings_path = str(Path(Path.home(), '.interlinearize'))
+    # Commands
+    if sys.argv[1] == "-c":
+        cmd = sys.argv[2]
+
+        config_path, config = get_config(get_path=True)
+        css_path, _ = get_interlinear_css(get_path=True)
+        default_editor = config['misc']['default_editor']
+
+        if cmd == "config":
+            os.system(default_editor + " " + str(config_path))
+
+        elif cmd == "css":
+            os.system(default_editor + " " + str(css_path))
+
+        elif cmd == "clear":
+            clear_item = sys.argv[3]
+            if clear_item == "config" or clear_item == "all":
+                os.remove(str(config_path))
+            elif clear_item == "css" or clear_item == "all":
+                os.remove(str(css_path))
+
+        elif cmd == "cleardict":
+            src = sys.argv[3]
+            dest = sys.argv[4]
+            word_dict_path, _ = load_word_dict(src, dest, get_path=True)
+
+            os.remove(Path( word_dict_path, "%s_%s.txt" % (src, dest) ))
+
+        sys.exit(0)
+
+    # Interlinearize
+    else:
+        src_lan, dest_lan, book_path, out_path = sys.argv[1:5]
+# -
 
 # Check if book exists
 
@@ -486,6 +541,7 @@ ignorable_punctuation_tokens = set(config['translation']['ignorable_punctuation_
 
 ## formatting
 
+exclude_spaces = config['formatting']['exclude_spaces'] == "True"
 class_translation = config['formatting']['class_translation']
 class_word = config['formatting']['class_word']
 class_paragraph = config['formatting']['class_paragraph']
@@ -498,7 +554,7 @@ class_space = config['formatting']['class_space']
 print("Converting book to HTMLZ")
 tmp_dir, book_soup = convert_book_to_HTML(book_path)
 
-_, word_dict = load_word_dict(src_lan, dest_lan)
+word_dict = load_word_dict(src_lan, dest_lan)
 
 word_list = get_word_list(book_soup.text, ignorable_punctuation_tokens)
 
