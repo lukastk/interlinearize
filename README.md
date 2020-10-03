@@ -86,6 +86,8 @@ will always be stored as text files in the `dict` folder (for more
 details see the section below), so the more books you use it on
 the less time it will take to translate.
 
+See [this](./docs/language_codes.md) for a list of language codes.
+
 ### Other commands
 
 Open the config file:
@@ -98,6 +100,12 @@ Open the style file:
 
 ```bash
 python interlinearize.py -c css
+```
+
+Open the a dictionary:
+
+```bash
+python interlinearize.py -c dict src dest
 ```
 
 Reset the config|css|all to default:
@@ -120,7 +128,7 @@ the `interlinear.css` style file. Other settings can be found in the
 
 You can also edit the dictionaries directly in the `dict` folder. Each
 dictionary is named in the format `src_dest.txt`, so a French to English dictionary would be in `dict/fr_en.txt` for example. See
-[here](./docs/language_codes.md) for a list of language codes.
+[this](./docs/language_codes.md) for a list of language codes.
 
 `interlinearize` always looks for the configuration and dictionary
 files within the execution folder first. If it cannot find the files

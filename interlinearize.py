@@ -486,6 +486,7 @@ else:
 
         config_path, config = get_config(get_path=True)
         css_path, _ = get_interlinear_css(get_path=True)
+        word_dict_path, _ = word_dict = load_word_dict("", "", get_path=True)
         default_editor = config['misc']['default_editor']
 
         if cmd == "config":
@@ -493,6 +494,11 @@ else:
 
         elif cmd == "css":
             os.system(default_editor + " " + str(css_path))
+
+        elif cmd == "dict":
+            src = sys.argv[3]
+            dest = sys.argv[4]
+            os.system(default_editor + " " + str(Path( word_dict_path, "%s_%s.txt" % (src, dest) )))
 
         elif cmd == "clear":
             clear_item = sys.argv[3]
